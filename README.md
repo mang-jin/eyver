@@ -6,12 +6,13 @@ Eyver means **Eye Saver**
 
 ```sh
 Usage:
-./eyver.sh <interval in seconds>
+./eyver.sh <interval in seconds> [font]
 Example:
 ./eyver.sh 1200        # pops up Eyver every 20 minutes
 ```
 
-You can change the message by editing the `eyver.sh` file.
+You can change the message's content and font by editing the `eyver.sh` file.
+Run `./eyver` executable(not bash script) without arguments to see the usage instructions.
 
 ## Build (POSIX systems)
 
