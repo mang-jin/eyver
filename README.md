@@ -11,6 +11,8 @@ Example:
 ./eyver.sh 1200        # pops up Eyver every 20 minutes
 ```
 
+`Ctrl+Alt+Enter` to close the pop-up window.
+
 You can change the message and font by editing the `eyver.sh` file.
 
 Run `./eyver` executable(not bash script) without arguments to see the usage instructions.
