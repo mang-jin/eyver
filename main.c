@@ -21,6 +21,16 @@ typedef struct {
         const char* font;
 } UserData;
 
+static gboolean update_label(gpointer user_data) {
+        GtkLabel* label = (GtkLabel*)user_data;
+
+        GDateTime *now = g_date_time_new_now_local();
+        gchar *time_str = g_date_time_format(now, "%p %I:%M:%S");
+
+        gtk_label_set_text(label,time_str);
+        return TRUE;
+}
+
 static void activate(GtkApplication* app, gpointer user_data) {
         GtkWidget* window;
         GtkWidget* label;
@@ -31,14 +41,32 @@ static void activate(GtkApplication* app, gpointer user_data) {
         gtk_window_set_title(GTK_WINDOW(window),"eyver");
         gtk_window_set_default_size(GTK_WINDOW(window),400,200);
 
+        GtkWidget* center = gtk_center_box_new();
+        GtkWidget* box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+        gtk_widget_set_halign(box, GTK_ALIGN_CENTER);
+        gtk_widget_set_valign(box, GTK_ALIGN_CENTER);
+        gtk_widget_add_css_class(center,"box");
+
+
         label = gtk_label_new(ud->msg);
+        gtk_widget_add_css_class(label,"text");
         gtk_widget_add_css_class(label,"title");
-        gtk_window_set_child(GTK_WINDOW(window),label);
+        gtk_box_append(GTK_BOX(box),label);
+
+        GtkWidget* l2 = gtk_label_new("subtitle");
+        gtk_widget_add_css_class(l2,"text");
+        gtk_widget_add_css_class(l2,"subtitle");
+        gtk_box_append(GTK_BOX(box),l2);
+
+        gtk_center_box_set_center_widget(GTK_CENTER_BOX(center), box);
+        gtk_window_set_child(GTK_WINDOW(window), center);
 
         char buf[1024];
         snprintf(buf,sizeof(buf),
-                 ".title { font-family: \"%s\"; font-size: 64px;"
-                 "background-color: #181818; color: #cfcfcf; }",
+                 ".text { font-family: \"%s\"; color: #cfcfcf; }\n"
+                 ".title { font-size: 64px; }\n"
+                 ".subtitle { font-size: 32px; }\n"
+                 ".box { background-color: #181818 }\n",
                  ud->font);
 
 
@@ -55,6 +83,8 @@ static void activate(GtkApplication* app, gpointer user_data) {
         GtkEventController *key_controller = gtk_event_controller_key_new();
         g_signal_connect(key_controller, "key-pressed", G_CALLBACK(on_key_pressed), app);
         gtk_widget_add_controller(window, key_controller);
+
+        g_timeout_add(100, update_label, l2);
 
         gtk_window_fullscreen(GTK_WINDOW(window));
         gtk_window_present(GTK_WINDOW(window));
