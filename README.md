@@ -12,6 +12,7 @@ Example:
 ```
 
 You can change the message and font by editing the `eyver.sh` file.
+
 Run `./eyver` executable(not bash script) without arguments to see the usage instructions.
 
 ## Build (POSIX systems)
