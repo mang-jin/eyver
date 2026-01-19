@@ -21,13 +21,19 @@ typedef struct {
         const char* font;
 } UserData;
 
+int sec = 0;
+int min = 0;
+
 static gboolean update_label(gpointer user_data) {
         GtkLabel* label = (GtkLabel*)user_data;
 
-        GDateTime *now = g_date_time_new_now_local();
-        gchar *time_str = g_date_time_format(now, "%p %I:%M:%S");
+        sec++;
+        if (sec > 59) { sec=0; min++; }
 
-        gtk_label_set_text(label,time_str);
+        gchar buf[256];
+        snprintf(buf,sizeof(buf),"%02d:%02d",min,sec);
+
+        gtk_label_set_text(label,buf);
         return TRUE;
 }
 
@@ -53,7 +59,7 @@ static void activate(GtkApplication* app, gpointer user_data) {
         gtk_widget_add_css_class(label,"title");
         gtk_box_append(GTK_BOX(box),label);
 
-        GtkWidget* l2 = gtk_label_new("subtitle");
+        GtkWidget* l2 = gtk_label_new("00:00");
         gtk_widget_add_css_class(l2,"text");
         gtk_widget_add_css_class(l2,"subtitle");
         gtk_box_append(GTK_BOX(box),l2);
@@ -84,7 +90,7 @@ static void activate(GtkApplication* app, gpointer user_data) {
         g_signal_connect(key_controller, "key-pressed", G_CALLBACK(on_key_pressed), app);
         gtk_widget_add_controller(window, key_controller);
 
-        g_timeout_add(100, update_label, l2);
+        g_timeout_add(1000, update_label, l2);
 
         gtk_window_fullscreen(GTK_WINDOW(window));
         gtk_window_present(GTK_WINDOW(window));
